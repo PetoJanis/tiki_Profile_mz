@@ -7,11 +7,17 @@ dependencies:
 
 preferences:
  feature_articles: y
+ feature_blogs: y
+ feature_calendar: y
+ feature_directory: y
  feature_categories: y
  feature_file_galleries: y
  feature_forums: y
  feature_hotwords: y
  feature_messages: y
+ feature_newsletters: y
+ feature_polls: y
+ feature_score: y
  feature_search: y
  feature_search_fulltext: y
  feature_syntax_highlighter: y
@@ -237,11 +243,11 @@ permissions:
    - modify_tracker_items_closed
    - remove_tracker_items
    - export_tracker
- SubAdmins:
+ Moderators:
   include: Editors
   allow:
    - admin_users
  Admins:
-  include: SubAdmins
+  include: Moderators
   allow:
    - admin
