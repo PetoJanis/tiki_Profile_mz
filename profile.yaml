@@ -215,7 +215,6 @@ permissions:
    - upload_files
    - upload_picture
    - create_tracker_items
-   - modify_tracker_items
    - comment_tracker_items
    - attach_trackers
    - watch_trackers
@@ -232,6 +231,7 @@ permissions:
    - admin_file_galleries
    - admin_categories
    - admin_trackers
+   - modify_tracker_items
    - admin_cms
    - modify_tracker_items_pending
    - modify_tracker_items_closed
