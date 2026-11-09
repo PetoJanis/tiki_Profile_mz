@@ -48,8 +48,11 @@ Profiles modify the database and permissions. Tiki does not provide a universal 
 | Ankety | **Tiki Polls** | Enable native polls. There are 25 `e107_polls` records; inspect schema and decide how much of poll definitions and historical votes can be retained. |
 | Newsletter | **Tiki Newsletters** | Enable the native newsletter feature and preserve the 293 archived newsletter entries where practical. Do not blindly import the 55,834 mailing-list rows; first establish what they represent and whether they are needed. |
 | Downloads | **Tiki File Galleries** | Migrate 85 download entries and 29 categories, preserving descriptions, download links/files and source IDs. |
-| Hodnotenia a reputácia | **Tiki ratings / Score** | Enable Score and assess native rating/score permissions. Do not assume the old e107 score model or unlock rules transfer automatically; map them only after inspecting the source data and desired policy. |
+| Hodnotenia, reputácia a odomykanie funkcií | **Tiki ratings / Score + group/category permissions** | Preserve the intended read/add/edit/rate/comment and approval rules for public and private sections. Enable Score, but do not assume the old e107 score model or unlock rules transfer automatically; verify whether the required thresholds can be implemented natively without custom core changes. |
 | Bug tracker | **Tiki Tracker or archived Wiki section** | Preserve the 14 legacy bug records and their category/status/priority/resolution metadata if they are still useful. Decide whether they should become active tracker items or a read-only archive. |
+| Editor a technické formátovanie | **Tiki WYSIWYG, Wiki syntax, tables, Code plugin and syntax highlighter** | Test WYSIWYG editing, tables, code blocks, syntax highlighting, image galleries and file attachments before importing content. |
+| Projekty KiCad / FreeCAD | **Wiki/Trackers with external GitHub links** | Provide project pages or structured project records linking to the relevant GitHub repositories, including KiCad libraries and FreeCAD projects. Preserve repository URLs and project descriptions; do not duplicate GitHub source files into Tiki without a reason. |
+| Verejné a súkromné sekcie | **Tiki Groups, category permissions and object permissions** | Model access separately for reading, submitting, editing, rating, commenting and approval. Test each permission with Anonymous, Registered, Editors, Moderators and Admins accounts. |
 
 ## Tracker configuration details
 
@@ -85,7 +88,7 @@ The profile declares the specialization as a registration field for the Register
 
 ## Additional features enabled / required for the complete Mikrozone site
 
-The profile enables native Tiki Blogs, Calendar, Directory, Newsletters, Polls and Score in addition to the initial core. Their content models and permissions still need dedicated Stage 3 tests. The company/service catalogue is distinct from the general links Directory and will use a Tracker because the legacy `scontent` records have custom fields and relationships.
+The profile enables native Tiki Blogs, Calendar, Directory, Newsletters, Polls and Score in addition to the initial core. Their content models and permissions still need dedicated Stage 3 tests. The overall portal must also support public/private areas, section-level ACLs, content approval, WYSIWYG editing, tables, image galleries, attachments and links to external KiCad/FreeCAD GitHub projects. The company/service catalogue is distinct from the general links Directory and will use a Tracker because the legacy `scontent` records have custom fields and relationships.
 
 Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ content must still be migrated; the preferred maintainable target is a Wiki FAQ structure or a dedicated FAQ Tracker, not dropping the content.
 
