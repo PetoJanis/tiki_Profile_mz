@@ -33,13 +33,23 @@ Profiles modify the database and permissions. Tiki does not provide a universal 
 | Technické návody, články a referenčný obsah | **Wiki pages / Wiki structures** | Use Wiki pages for collaboratively maintained, structured technical documentation. Existing e107 articles/news remain Articles; do not move all content into Wiki. |
 | Kódové ukážky v obsahu | **Wiki syntax + syntax highlighter / Code plugin** | Enable Tiki syntax highlighting. Test CODE blocks with the languages actually used on Mikrozone before importing content. |
 | Obrázky, súbory a prílohy | **File Galleries** | Central file storage for migrated e107 public files. Forum attachments remain associated with their forum posts where possible; other files go to suitable galleries. Preserve original file names and source IDs in migration metadata. |
-| Používateľské skupiny | **Tiki Groups and permissions** | Use the built-in Anonymous, Registered, Editors, SubAdmins and Admins hierarchy as the starting point. Mikrozone-specific roles (e.g. moderators and business users) need final naming and membership mapping during the migration design. |
-| Verejný profil – špecializácia | **Tracker: Profilové údaje Mikrozone** | One tracker item per user. The public field is exactly “Moja špecializácia (procesor, firma, alebo iné)”. It is not marked searchable. The user selector associates the item with a Tiki account. |
+| Používateľské skupiny | **Tiki Groups and permissions** | Use Anonymous, Registered, Editors, **Moderators** and Admins. Moderators inherit editor permissions and receive user-management rights only if explicitly assigned; they are not site administrators. Map the legacy e107 classes to these groups after reviewing all 10 source classes. |
+| Verejný a rozšírený profil používateľa | **Tracker: Profilové údaje Mikrozone + Tiki user profile** | Preserve the full `e107_user_extended` dataset, not only the specialization. Known legacy fields include country, homepage, specialization and LinkedIn URL; inspect the actual source field definitions and values before defining the complete target field set and visibility. The specialization remains mandatory, public and deliberately not searchable. One tracker item per user associates data with the Tiki account. |
 | Pôvodné štatistiky a história e107 | **Hidden migration fields in the same user tracker + native Tiki user fields where appropriate** | Keep original e107 ID, registration date, last visit, visits, posts and comments as legacy values. These are not marked public. Do not overwrite Tiki's own login/activity timestamps with historical values. Validate post/comment totals against imported content before displaying any totals. |
 | Súkromné správy | **Tiki Messages** | Built-in inter-user messaging. Test send, receive, unread state, permissions and email notification behavior. |
 | Sledovanie noviniek a diskusií | **Tiki Watches** | Built-in user/group watches and notification preferences. Test forum and article subscriptions. |
 | E-mailové notifikácie | **Tiki mail / notification settings** | Profile enables the relevant feature areas, but SMTP/from-address/cron delivery are site-specific and must be configured and tested on the hosting environment. |
 | Chat | **Existing Mikrozone PHPFreeChat bridge** | Not replaced by Tiki MiniChat. The bridge already developed in Stage 2 remains a separate integration. The profile intentionally disables Tiki MiniChat to avoid two competing chat systems. |
+| Blogy / používateľské denníky | **Tiki Blogs** | Enable native blogs. Migrate the 77 `e107_userjournals` entries with their authors, dates, comments and links. Do not treat news Articles as a substitute for blogs. |
+| Katalóg firiem a služieb | **Tracker-based company/service directory** | Migrate 166 `e107_scontent_items`, 9 categories and 150 item relationships. Preserve company/service categories and predecessor/successor or other relationships. The exact Tracker fields must be designed after inspecting the legacy `f1`–`f9` definitions; do not guess their meaning. |
+| Adresár webových odkazov | **Tiki Directory** | A separate feature from the company/service catalogue. Migrate 108 `e107_links` records into categorized Directory entries, retaining titles, URLs, descriptions and source IDs where available. |
+| FAQ | **Wiki FAQ structure or FAQ Tracker** | Preserve 19 `e107_faq` entries and 11 related `e107_faq_info` records. Tiki's legacy FAQ feature is deprecated in current documentation, so use a maintainable Wiki/Tracker-based FAQ unless Tiki 30.1 testing proves the native FAQ feature is appropriate. |
+| Kalendár | **Tiki Calendar** | Enable calendars and migrate 176 `e107_event` records with their 5 categories, dates, authors and descriptions. |
+| Ankety | **Tiki Polls** | Enable native polls. There are 25 `e107_polls` records; inspect schema and decide how much of poll definitions and historical votes can be retained. |
+| Newsletter | **Tiki Newsletters** | Enable the native newsletter feature and preserve the 293 archived newsletter entries where practical. Do not blindly import the 55,834 mailing-list rows; first establish what they represent and whether they are needed. |
+| Downloads | **Tiki File Galleries** | Migrate 85 download entries and 29 categories, preserving descriptions, download links/files and source IDs. |
+| Hodnotenia a reputácia | **Tiki ratings / Score** | Enable Score and assess native rating/score permissions. Do not assume the old e107 score model or unlock rules transfer automatically; map them only after inspecting the source data and desired policy. |
+| Bug tracker | **Tiki Tracker or archived Wiki section** | Preserve the 14 legacy bug records and their category/status/priority/resolution metadata if they are still useful. Decide whether they should become active tracker items or a read-only archive. |
 
 ## Tracker configuration details
 
@@ -73,10 +83,16 @@ The profile declares the specialization as a registration field for the Register
 
 **Important:** the legacy statistics are storage for migration fidelity, not automatically trustworthy public counters. A migration importer must preserve the source values, map e107 user IDs to Tiki user IDs, and compare post/comment totals with the content actually imported.
 
+## Additional features enabled / required for the complete Mikrozone site
+
+The profile enables native Tiki Blogs, Calendar, Directory, Newsletters, Polls and Score in addition to the initial core. Their content models and permissions still need dedicated Stage 3 tests. The company/service catalogue is distinct from the general links Directory and will use a Tracker because the legacy `scontent` records have custom fields and relationships.
+
+Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ content must still be migrated; the preferred maintainable target is a Wiki FAQ structure or a dedicated FAQ Tracker, not dropping the content.
+
 ## Features intentionally not created by this profile
 
 - No new chat implementation – use the Stage 2 PHPFreeChat bridge.
-- No separate blog – e107 news maps to Articles.
+- Blogs are a required separate content area; e107 news maps to Articles and user journals map to Tiki Blogs.
 - No replacement forum extension – use native Tiki Forums.
 - No custom PHP or Tiki core modifications.
 - No automatic SMTP credentials, filesystem paths or cron entries – these are environment-specific.
@@ -92,6 +108,13 @@ The profile declares the specialization as a registration field for the Register
 - [ ] A user can view and edit their own specialization; another user can see it in the public profile.
 - [ ] Specialization is not included in tracker search results.
 - [ ] Editors can moderate forum content and lexicon entries without gaining full site administration.
+- [ ] Moderators group exists under the correct name, inherits Editor rights and is not accidentally granted full site administration.
+- [ ] Blogs are enabled and legacy user journals can be represented with authors, dates and comments.
+- [ ] Company/service catalogue and general links Directory are separate, categorized and retain their legacy relationships/URLs.
+- [ ] FAQ entries and related information have a defined Wiki/Tracker target and remain searchable/readable.
+- [ ] Calendar events and categories are enabled and can be migrated.
+- [ ] Polls, newsletter archive, downloads and legacy ratings/Score have explicit migration decisions and working permissions.
+- [ ] All meaningful `e107_user_extended` fields have been inventoried and mapped with correct privacy settings.
 - [ ] Lexicon items can be created, listed, searched and opened; comments/links behave correctly.
 - [ ] Articles can be published with author, date, categories and attachments.
 - [ ] HotWords can be created and automatically link matching words in content.
