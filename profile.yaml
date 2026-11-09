@@ -1,0 +1,247 @@
+# Mikrozone profile for Tiki Wiki CMS Groupware 30.1
+# Extends the official Collaborative_Community_21 profile.
+# Apply on a clean Tiki 30.1 test site first.
+
+dependencies:
+ - $profiles.tiki.org:Collaborative_Community_21
+
+preferences:
+ feature_articles: y
+ feature_categories: y
+ feature_file_galleries: y
+ feature_forums: y
+ feature_hotwords: y
+ feature_messages: y
+ feature_search: y
+ feature_search_fulltext: y
+ feature_syntax_highlighter: y
+ feature_trackers: y
+ feature_user_watches: y
+ feature_group_watches: y
+ feature_wiki: y
+ feature_wiki_attachments: y
+ feature_wiki_print: y
+ users_prefs_user_information: public
+ users_prefs_show_mouseover_user_info: y
+ feature_community_mouseover: y
+ # Mikrozone uses its separately integrated PHPFreeChat bridge, not Tiki MiniChat.
+ feature_minichat: n
+ # Keep the existing Collaborative Community navigation and add content links manually
+ # after the first installation test if the site's menu layout differs.
+
+objects:
+ -
+  type: category
+  ref: mz_cat_news
+  data:
+   name: Mikrozone – Novinky
+   description: Novinky a oznamy Mikrozone
+ -
+  type: category
+  ref: mz_cat_lexicon
+  data:
+   name: Mikrozone – Lexikón
+   description: Odborné heslá a vysvetlenia pojmov
+ -
+  type: category
+  ref: mz_cat_docs
+  data:
+   name: Mikrozone – Dokumentácia
+   description: Technické návody, dokumentácia a referenčné materiály
+ -
+  type: tracker
+  ref: mz_lexicon
+  data:
+   name: Lexikón Mikrozone
+   description: Odborný slovník pojmov. Jeden záznam predstavuje jedno heslo.
+   default_status: open
+   show: [ status, creation_date, modification_date, list_modification_date ]
+   allow: [ comments ]
+ -
+  type: tracker_field
+  ref: mz_lexicon_term
+  data:
+   name: Heslo
+   permname: term
+   tracker: $mz_lexicon
+   type: text_field
+   flags: [ searchable, public, list, mandatory, link ]
+   order: 10
+ -
+  type: tracker_field
+  ref: mz_lexicon_definition
+  data:
+   name: Vysvetlenie
+   permname: definition
+   tracker: $mz_lexicon
+   type: text_area
+   options: 1
+   flags: [ public, mandatory ]
+   order: 20
+ -
+  type: tracker_field
+  ref: mz_lexicon_synonyms
+  data:
+   name: Súvisiace názvy a skratky
+   permname: synonyms
+   tracker: $mz_lexicon
+   type: text_field
+   flags: [ searchable, public, list ]
+   order: 30
+ -
+  type: tracker_field
+  ref: mz_lexicon_source
+  data:
+   name: Zdroj / odkaz
+   permname: source
+   tracker: $mz_lexicon
+   type: url
+   flags: [ public ]
+   order: 40
+ -
+  type: tracker
+  ref: mz_user_profile
+  data:
+   name: Profilové údaje Mikrozone
+   description: Rozšírené verejné a migračné údaje používateľov. Jeden záznam na používateľa.
+   default_status: open
+   show: [ creation_date, modification_date ]
+   allow: [ creator_modification, one_item_per_user ]
+ -
+  type: tracker_field
+  ref: mz_user_login
+  data:
+   name: Používateľ
+   permname: login
+   tracker: $mz_user_profile
+   type: user
+   options: 1
+   flags: [ searchable, public, list, mandatory, link ]
+   order: 10
+ -
+  type: tracker_field
+  ref: mz_user_specialization
+  data:
+   name: Moja špecializácia (procesor, firma, alebo iné)
+   permname: specialization
+   tracker: $mz_user_profile
+   type: text_area
+   options: 1
+   flags: [ public, mandatory ]
+   order: 20
+ -
+  type: tracker_field
+  ref: mz_e107_user_id
+  data:
+   name: Pôvodné e107 ID
+   permname: e107_user_id
+   tracker: $mz_user_profile
+   type: numeric
+   flags: [ searchable ]
+   order: 90
+ -
+  type: tracker_field
+  ref: mz_e107_registration_date
+  data:
+   name: Pôvodný dátum registrácie
+   permname: e107_registration_date
+   tracker: $mz_user_profile
+   type: text_field
+   order: 100
+ -
+  type: tracker_field
+  ref: mz_e107_last_visit
+  data:
+   name: Pôvodný posledný prístup
+   permname: e107_last_visit
+   tracker: $mz_user_profile
+   type: text_field
+   order: 110
+ -
+  type: tracker_field
+  ref: mz_e107_visits
+  data:
+   name: Pôvodný počet návštev
+   permname: e107_visits
+   tracker: $mz_user_profile
+   type: numeric
+   order: 120
+ -
+  type: tracker_field
+  ref: mz_e107_posts
+  data:
+   name: Pôvodný počet príspevkov
+   permname: e107_posts
+   tracker: $mz_user_profile
+   type: numeric
+   order: 130
+ -
+  type: tracker_field
+  ref: mz_e107_comments
+  data:
+   name: Pôvodný počet komentárov
+   permname: e107_comments
+   tracker: $mz_user_profile
+   type: numeric
+   order: 140
+
+permissions:
+ Anonymous:
+  allow:
+   - view
+   - forum_read
+   - read_article
+   - search
+   - list_file_galleries
+   - view_file_gallery
+   - download_files
+   - list_trackers
+   - view_trackers
+   - tracker_view_comments
+   - tracker_view_attachments
+   - wiki_view_attachments
+ Registered:
+  include: Anonymous
+  allow:
+   - forum_post
+   - forum_post_topic
+   - forum_edit_own_posts
+   - forum_attach
+   - forum_vote
+   - comment
+   - post_comments
+   - read_comments
+   - messages
+   - upload_files
+   - upload_picture
+   - create_tracker_items
+   - modify_tracker_items
+   - comment_tracker_items
+   - attach_trackers
+   - watch_trackers
+   - wiki_view_history
+   - wiki_view_source
+  user_tracker: $mz_user_profile
+  user_tracker_field: $mz_user_login
+  registration_fields: [ $profileobject:mz_user_specialization$ ]
+ Editors:
+  include: Registered
+  allow:
+   - admin_forum
+   - admin_wiki
+   - admin_file_galleries
+   - admin_categories
+   - admin_trackers
+   - admin_cms
+   - modify_tracker_items_pending
+   - modify_tracker_items_closed
+   - remove_tracker_items
+   - export_tracker
+ SubAdmins:
+  include: Editors
+  allow:
+   - admin_users
+ Admins:
+  include: SubAdmins
+  allow:
+   - admin
