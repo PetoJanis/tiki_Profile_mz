@@ -35,7 +35,7 @@ preferences:
  user_trackersync_trackers: [ $mz_user_profile ]
  # Registration remains open, but new accounts require administrator approval.
  allowRegister: y
- validateUsers: y
+ validateRegistration: y
  # Mikrozone uses its separately integrated AJAX Chat package, not Tiki MiniChat.
  feature_minichat: n
  # Do not globally expose native email addresses. Public profile data is provided
