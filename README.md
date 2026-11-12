@@ -101,7 +101,7 @@ Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ
 
 ## Features intentionally not created by this profile
 
-- No new chat implementation – use the Stage 2 PHPFreeChat bridge.
+- No new chat implementation – use the Stage 2 AJAX Chat Tiki package.
 - Blogs are a required separate content area; e107 news maps to Articles and user journals map to Tiki Blogs.
 - No replacement forum extension – use native Tiki Forums.
 - No custom PHP or Tiki core modifications.
@@ -131,7 +131,7 @@ Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ
 - [ ] Wiki CODE blocks render and syntax highlighting works for representative languages.
 - [ ] File galleries accept and serve files with the intended permissions.
 - [ ] Tiki Watches and email notifications work end-to-end with the actual hosting mail configuration.
-- [ ] Existing PHPFreeChat bridge still works; Tiki MiniChat remains disabled.
+- [ ] Existing AJAX Chat Tiki package still works; Tiki MiniChat remains disabled.
 - [ ] No legacy e107 statistic is shown as a new Tiki statistic.
 
 ## Known limitations / items to validate
