@@ -1,6 +1,6 @@
 # Mikrozone profile for Tiki Wiki CMS Groupware 30.1
 # Extends the official Collaborative_Community_21 profile.
-# Apply on a clean Tiki 30.1 test site first.
+# Apply and validate on a clean Tiki 30.1 test site before production use.
 
 dependencies:
  - $profiles.tiki.org:Collaborative_Community_21
@@ -27,13 +27,22 @@ preferences:
  feature_wiki: y
  feature_wiki_attachments: y
  feature_wiki_print: y
- users_prefs_user_information: public
+ # User tracker integration follows the official User_Trackers profile pattern.
+ feature_mytiki: y
+ feature_userPreferences: y
+ userTracker: y
+ trackerfield_userpreference: y
+ user_trackersync_trackers: [ $mz_user_profile ]
+ # Registration remains open, but new accounts require administrator approval.
+ allowRegister: y
+ validateUsers: y
+ # Mikrozone uses its separately integrated AJAX Chat package, not Tiki MiniChat.
+ feature_minichat: n
+ # Do not globally expose native email addresses. Public profile data is provided
+ # explicitly by public tracker fields below.
+ users_prefs_user_information: private
  users_prefs_show_mouseover_user_info: y
  feature_community_mouseover: y
- # Mikrozone uses its separately integrated PHPFreeChat bridge, not Tiki MiniChat.
- feature_minichat: n
- # Keep the existing Collaborative Community navigation and add content links manually
- # after the first installation test if the site's menu layout differs.
 
 objects:
  -
@@ -109,7 +118,7 @@ objects:
   ref: mz_user_profile
   data:
    name: Profilové údaje Mikrozone
-   description: Rozšírené verejné a migračné údaje používateľov. Jeden záznam na používateľa.
+   description: Verejné profilové a súkromné migračné údaje používateľov. Jeden záznam na používateľa.
    default_status: open
    show: [ creation_date, modification_date ]
    allow: [ creator_modification, one_item_per_user ]
@@ -135,6 +144,46 @@ objects:
    options: 1
    flags: [ public, mandatory ]
    order: 20
+ -
+  type: tracker_field
+  ref: mz_user_country
+  data:
+   name: Country
+   permname: country
+   tracker: $mz_user_profile
+   type: country
+   flags: [ public, mandatory ]
+   order: 30
+ -
+  type: tracker_field
+  ref: mz_user_homepage
+  data:
+   name: Homepage
+   permname: homepage
+   tracker: $mz_user_profile
+   type: url
+   flags: [ public ]
+   order: 40
+ -
+  type: tracker_field
+  ref: mz_user_linkedin
+  data:
+   name: LinkedIn
+   permname: linkedin_url
+   tracker: $mz_user_profile
+   type: url
+   flags: [ public ]
+   order: 50
+ -
+  type: tracker_field
+  ref: mz_user_language
+  data:
+   name: Jazyk
+   permname: language
+   tracker: $mz_user_profile
+   type: text_field
+   flags: [ public ]
+   order: 60
  -
   type: tracker_field
   ref: mz_e107_user_id
@@ -228,8 +277,9 @@ permissions:
    - wiki_view_source
   user_tracker: $mz_user_profile
   user_tracker_field: $mz_user_login
-  registration_fields: [ $profileobject:mz_user_specialization$ ]
+  registration_fields: [ $profileobject:mz_user_specialization$, $profileobject:mz_user_country$ ]
  Editors:
+  description: Redaktori Mikrozone
   include: Registered
   allow:
    - admin_forum
@@ -244,9 +294,16 @@ permissions:
    - remove_tracker_items
    - export_tracker
  Moderators:
+  description: Moderátori Mikrozone; samostatná rola nad rámec redaktorov
   include: Editors
   allow:
    - admin_users
+ Neaktívny:
+  description: Neaktívni používatelia; členstvo a obmedzenia sa nastavia pri migrácii
+  include: []
+ Na odstránenie:
+  description: Používatelia určení na odstránenie; členstvo a obmedzenia sa nastavia pri migrácii
+  include: []
  Admins:
   include: Moderators
   allow:
