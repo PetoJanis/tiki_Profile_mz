@@ -39,7 +39,7 @@ Profiles modify the database and permissions. Tiki does not provide a universal 
 | Súkromné správy | **Tiki Messages** | Built-in inter-user messaging. Test send, receive, unread state, permissions and email notification behavior. |
 | Sledovanie noviniek a diskusií | **Tiki Watches** | Built-in user/group watches and notification preferences. Test forum and article subscriptions. |
 | E-mailové notifikácie | **Tiki mail / notification settings** | Profile enables the relevant feature areas, but SMTP/from-address/cron delivery are site-specific and must be configured and tested on the hosting environment. |
-| Chat | **Existing Mikrozone PHPFreeChat bridge** | Not replaced by Tiki MiniChat. The bridge already developed in Stage 2 remains a separate integration. The profile intentionally disables Tiki MiniChat to avoid two competing chat systems. |
+| Chat | **Existing Mikrozone AJAX Chat Tiki package** | Not replaced by Tiki MiniChat. The bridge already developed in Stage 2 remains a separate integration. The profile intentionally disables Tiki MiniChat to avoid two competing chat systems. |
 | Blogy / používateľské denníky | **Tiki Blogs** | Enable native blogs. Migrate the 77 `e107_userjournals` entries with their authors, dates, comments and links. Do not treat news Articles as a substitute for blogs. |
 | Katalóg firiem a služieb | **Tracker-based company/service directory** | Migrate 166 `e107_scontent_items`, 9 categories and 150 item relationships. Preserve company/service categories and predecessor/successor or other relationships. The exact Tracker fields must be designed after inspecting the legacy `f1`–`f9` definitions; do not guess their meaning. |
 | Adresár webových odkazov | **Tiki Directory** | A separate feature from the company/service catalogue. Migrate 108 `e107_links` records into categorized Directory entries, retaining titles, URLs, descriptions and source IDs where available. |
@@ -74,7 +74,14 @@ The tracker supports comments. It is intended to replace the legacy e107 Lexikon
 The tracker is configured for one item per user and creator modification. Its fields are:
 
 - **Používateľ** – Tiki User selector, used as the account link.
-- **Moja špecializácia (procesor, firma, alebo iné)** – public text area, mandatory, deliberately not searchable.
+- **Moja špecializácia (procesor, firma, alebo iné)** – public text area, mandatory at registration, deliberately not searchable.
+- **Country** – public country selector, mandatory at registration.
+- **Homepage** – public URL.
+- **LinkedIn** – public URL (`user_linkedin_url`).
+- **Jazyk** – language value from `user_language`; currently stored as text pending validation of the preferred Tiki-native language preference field.
+- **Profilová fotografia** – source is `user_image`; use Tiki's native user image/avatar mechanism if it is available and validated. It is not duplicated into a tracker field in this profile.
+- **E-mail** – remains the Tiki account email and is not exposed as a public tracker field. Public email display is disabled by default; preserve `user_hideemail` semantics during import.
+- **Ďalšie sociálne odkazy** – the source inventory must determine the exact named fields and URLs. Do not collapse multiple named social links into one unstructured field or invent networks.
 - **Pôvodné e107 ID** – private migration key.
 - **Pôvodný dátum registrácie** – private legacy value.
 - **Pôvodný posledný prístup** – private legacy value.
@@ -82,7 +89,7 @@ The tracker is configured for one item per user and creator modification. Its fi
 - **Pôvodný počet príspevkov** – private legacy value.
 - **Pôvodný počet komentárov** – private legacy value.
 
-The profile declares the specialization as a registration field for the Registered group. This must be verified in the actual Tiki 30.1 registration flow. In particular, test whether the field is shown, required, saved against the new user, and available to an administrator reviewing a pending registration. If the registration UI does not expose it correctly, do not accept that as complete: use the Tiki-supported user tracker registration integration and adjust the profile after the test.
+The profile declares both **specialization and Country as mandatory registration fields** for the Registered group. Country is mandatory from registration (confirmed 12 Nov 2026). The profile also enables Tiki's user-tracker integration and account approval (`validateRegistration: y`); this follows the official User_Trackers pattern but must still be verified in the actual Tiki 30.1 registration flow. Test that both fields are shown, required, saved against the new user, and available to an administrator reviewing a pending registration. If the registration UI does not expose it correctly, do not accept that as complete: use the Tiki-supported user tracker registration integration and adjust the profile after the test.
 
 **Important:** the legacy statistics are storage for migration fidelity, not automatically trustworthy public counters. A migration importer must preserve the source values, map e107 user IDs to Tiki user IDs, and compare post/comment totals with the content actually imported.
 
@@ -94,7 +101,7 @@ Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ
 
 ## Features intentionally not created by this profile
 
-- No new chat implementation – use the Stage 2 PHPFreeChat bridge.
+- No new chat implementation – use the Stage 2 AJAX Chat Tiki package.
 - Blogs are a required separate content area; e107 news maps to Articles and user journals map to Tiki Blogs.
 - No replacement forum extension – use native Tiki Forums.
 - No custom PHP or Tiki core modifications.
@@ -124,7 +131,7 @@ Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ
 - [ ] Wiki CODE blocks render and syntax highlighting works for representative languages.
 - [ ] File galleries accept and serve files with the intended permissions.
 - [ ] Tiki Watches and email notifications work end-to-end with the actual hosting mail configuration.
-- [ ] Existing PHPFreeChat bridge still works; Tiki MiniChat remains disabled.
+- [ ] Existing AJAX Chat Tiki package still works; Tiki MiniChat remains disabled.
 - [ ] No legacy e107 statistic is shown as a new Tiki statistic.
 
 ## Known limitations / items to validate
@@ -144,3 +151,44 @@ Tiki's current documentation marks the legacy FAQ feature as deprecated. The FAQ
 - [Creating a Tracker](https://doc.tiki.org/Creating-a-Tracker)
 - [Tracker Field Types](https://doc.tiki.org/Tracker-Field-Types)
 - [Custom Profile Repository](https://profiles.tiki.org/Custom+Repository)
+
+
+## Audit update – 12 November 2026
+
+The profile has been revised after reviewing the Tiki public profiles and the Mikrozone migration inventory.
+
+### User tracker and registration
+
+- The user tracker now includes the known source profile data: specialization, Country, Homepage, LinkedIn and language, alongside the private e107 migration metadata.
+- Country and specialization are both declared as mandatory registration fields.
+- The configuration now enables Tiki's user-tracker integration preferences (`userTracker`, `trackerfield_userpreference` and `user_trackersync_trackers`) following the structure of the official [User_Trackers profile](https://profiles.tiki.org/User_Trackers).
+- New account registration is enabled and account validation is set to administrator approval (`validateRegistration: y`), which is the current Tiki preference for requiring administrator approval. The public User_Trackers example contains `validateUsers: n`; that older/example setting is not used here.
+- Email is not a public tracker field. The profile sets the global user-information preference to private; the actual profile display and email-hiding behavior must be checked with Anonymous and Registered test accounts.
+- The source avatar field `user_image` is not represented as an ordinary text field. Validate Tiki's native user-image mechanism and preserve the original file mapping in the importer.
+- Additional social links are deliberately not guessed. Complete their named fields after the full `e107_user_extended` field inventory is confirmed.
+
+### Groups and inherited profile
+
+- The target groups defined here are `Editors` (Redaktori), `Moderators`, `Neaktívny` and `Na odstránenie`, in addition to `Registered`, `Anonymous` and `Admins`.
+- `Moderators` inherits `Editors`; it is not named `SubAdmins`.
+- The official `Collaborative_Community_21` dependency may itself create a `SubAdmins` group and baseline permissions. This profile does not assume that dependency groups are automatically deleted. Inspect the resulting group list and permissions after applying it; do not assign Mikrozone users to `SubAdmins`.
+- The `Neaktívny` and `Na odstránenie` groups are created as migration/administrative target groups. Their membership and final deny/limited-access rules are assigned by the importer or a separately reviewed permission step, not guessed here.
+
+### Feature switches versus content objects
+
+This profile enables the native feature areas required by the migration (Articles, Blogs, Calendar, Directory, Forums, File Galleries, Messages, Newsletters, Polls, Score, Trackers, Wiki and HotWords). Enabling a feature does **not** create the final Mikrozone content model, menu, categories, galleries, trackers, or all ACL rules.
+
+The current profile explicitly creates only the initial categories, Lexikón tracker and user-profile tracker. The following still require separate design and Tiki 30.1 verification before content import:
+
+- Articles and the two news types `Bleskovka` and `Novinka`.
+- Company/service directory Tracker, including the legacy item relationships.
+- FAQ structure (Wiki or Tracker).
+- Blog permissions and private/public behavior.
+- Calendar categories, recurring events and homepage teaser.
+- Gallery hierarchy and per-user/private gallery permissions.
+- Historical private-message import and message privacy.
+- Final category/object permissions and navigation.
+
+### Test status
+
+These changes are a profile-definition update based on the audit, **not proof that the profile has been successfully applied to Tiki 30.1**. In particular, verify registration field synchronization, mandatory validation, approval workflow, public specialization/Country display, email privacy, user-image behavior and the resulting group inheritance on a disposable clean installation. Do not import production data until those tests pass.
